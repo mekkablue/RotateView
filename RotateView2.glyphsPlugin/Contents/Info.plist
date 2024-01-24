@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleExecutable</key>
+	<string>plugin</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.saja.RotateView2</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>RotateView2</string>
+	<key>CFBundleVersion</key>
+	<string>5</string>
+	<key>CFBundleShortVersionString</key>
+	<string>2.0</string>
+  <!-- <key>UpdateFeedURL</key>
+  <string>https://raw.githubusercontent.com/aaronbell/RotateView/master/RotateView.glyphsPlugin/Contents/Info.plist</string>
+  <key>productPageURL</key>
+  <string>https://github.com/aaronbell/RotateView</string>   -->
+	<key>productReleaseNotes</key>
+	<string>Rotate the complete Edit View content</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright, Aaron Bell, 2021</string>
+	<key>NSPrincipalClass</key>
+	<string>RotateView2</string>
+	<key>PyMainFileNames</key>
+	<array>
+		<string>plugin.py</string>
+	</array>
+</dict>
+</plist>
