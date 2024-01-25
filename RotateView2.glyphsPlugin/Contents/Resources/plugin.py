@@ -19,7 +19,7 @@ import objc
 from GlyphsApp import *
 from GlyphsApp.plugins import *
 from vanilla import VanillaBaseObject
-from AppKit import NSAffineTransform, NSAffineTransformStruct, NSRectFill, NSView, NSNoBorder, NSColor, NSBezierPath, NSFullSizeContentViewWindowMask
+from AppKit import NSAffineTransform, NSAffineTransformStruct, NSRectFill, NSView, NSNoBorder, NSColor, NSBezierPath, NSFullSizeContentViewWindowMask, NSEvent, NSEventModifierFlagOption
 from Foundation import NSWidth, NSHeight, NSMidX, NSMidY
 import traceback, math
 
@@ -53,27 +53,41 @@ class RotatePreviewView(NSView):
 		
 		try:
 			previewPath = NSBezierPath.bezierPath()
-			for layer in tab.layers:
+			previousLayer = None
+			for i in range(len(tab.layers)):
+				layer = tab.layers[i]
 				if type(layer) == GSControlLayer:
 					break
 
 				previewPath.appendBezierPath_(layer.completeBezierPath)
+				
 				xMove, yMove = 0, 0
+				kerning = 0
+				if i < len(tab.layers) - 1:
+					kerning = layer.nextKerningForLayer_direction_(tab.layers[i+1], tab.direction)
+					if kerning > 10000:
+						kerning = 0
+					
 				if tab.direction == 2:
 					# RTL
 					xMove = layer.width
-				elif tab.direction == 4:
+					xMove += kerning
+				elif tab.direction == 4 and layer.vertWidth:
 					# TTB
-					yMove = -vertWidth
+					yMove = -layer.vertWidth
+					yMove -= kerning
 				else:
 					# LTR
 					xMove = -layer.width
+					xMove -= kerning
+						
 				previewPath.transformUsingAffineTransform_(
 					transform(
 						shiftX=xMove,
 						shiftY=yMove,
 					)
 				)
+				# previousLayer = layer
 				
 			Width = NSWidth(self.frame())
 			Height = NSHeight(self.frame())
@@ -150,11 +164,21 @@ class RotateView2(GeneralPlugin):
 
 	def showWindow_(self, sender):
 		try:
-			from vanilla import Group, Slider, TextBox, Window
+			from vanilla import Group, Slider, TextBox, FloatingWindow, Window
 			self.windowWidth = 300
 			self.windowHeight = 240
 			
-			self.w = Window((self.windowWidth, self.windowWidth), "Rotate View 2", minSize=(self.windowWidth, self.windowWidth), autosaveName="com.saja.RotateView2.window")
+			keysPressed = NSEvent.modifierFlags()
+			optionKeyPressed = keysPressed & NSEventModifierFlagOption == NSEventModifierFlagOption
+
+			windowSize=(self.windowWidth, self.windowWidth)
+			windowTitle="Rotate View 2"
+			autosaveName="com.saja.RotateView2.window"
+
+			if optionKeyPressed:
+				self.w = FloatingWindow( windowSize, windowTitle, minSize=windowSize, autosaveName=autosaveName )
+			else:
+				self.w = Window( windowSize, windowTitle, minSize=windowSize, autosaveName=autosaveName )
 			window = self.w.getNSWindow()
 			window.setStyleMask_(window.styleMask() | NSFullSizeContentViewWindowMask)
 			try:# only available in 10.10
