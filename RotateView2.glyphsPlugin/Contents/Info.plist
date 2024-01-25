@@ -15,13 +15,13 @@
 	<key>CFBundleVersion</key>
 	<string>5</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0</string>
+	<string>2.0.1</string>
   <!-- <key>UpdateFeedURL</key>
   <string>https://raw.githubusercontent.com/aaronbell/RotateView/master/RotateView.glyphsPlugin/Contents/Info.plist</string>
   <key>productPageURL</key>
   <string>https://github.com/aaronbell/RotateView</string>   -->
 	<key>productReleaseNotes</key>
-	<string>Rotate the complete Edit View content</string>
+	<string>Draw complete bezier path, honor the writing direction.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright, Aaron Bell, 2021</string>
 	<key>NSPrincipalClass</key>

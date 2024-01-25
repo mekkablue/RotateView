@@ -42,27 +42,49 @@ class RotatePreviewView(NSView):
 		
 		NSColor.whiteColor().set()
 		NSBezierPath.fillRect_(rect)
-
-		if Glyphs.font is None or not Glyphs.font.currentTab:
+		
+		font = Glyphs.font
+		if font is None or not font.currentTab:
 			return
 		
-		if not Glyphs.font.currentTab.layers:
+		tab = font.currentTab
+		if not tab.layers:
 			return
 		
 		try:
 			previewPath = NSBezierPath.bezierPath()
-			for layer in Glyphs.font.currentTab.layers:
+			for layer in tab.layers:
 				if type(layer) == GSControlLayer:
 					break
-				previewPath.appendBezierPath_(layer.bezierPath)
+
+				previewPath.appendBezierPath_(layer.completeBezierPath)
+				xMove, yMove = 0, 0
+				if tab.direction == 2:
+					# RTL
+					xMove = layer.width
+				elif tab.direction == 4:
+					# TTB
+					yMove = -vertWidth
+				else:
+					# LTR
+					xMove = -layer.width
 				previewPath.transformUsingAffineTransform_(
-					transform(shiftX=-layer.width),
+					transform(
+						shiftX=xMove,
+						shiftY=yMove,
+					)
 				)
 				
-			rotationFactor = Glyphs.defaults['com.saja.RotateView2.angle']
 			Width = NSWidth(self.frame())
 			Height = NSHeight(self.frame())
-			scaleFactor = 0.666666 / (Glyphs.font.upm / min(Width, Height))
+			scaleFactor = 0.666666 / (font.upm / min(Width, Height))
+			
+			additionalScale = Glyphs.defaults['com.saja.RotateView2.scale']
+			if additionalScale:
+				try:
+					scaleFactor *= float(additionalScale)
+				except Exception as e:
+					print(e)
 			
 			## scaling and zeroing the glyph
 			bounds = previewPath.bounds()
@@ -77,7 +99,7 @@ class RotatePreviewView(NSView):
 			## rotation
 			previewPath.transformUsingAffineTransform_( 
 				transform(
-					rotate=rotationFactor,
+					rotate=Glyphs.defaults['com.saja.RotateView2.angle'],
 				)
 			)
 			
